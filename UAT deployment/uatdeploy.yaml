@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-java-app-uat
+  namespace: uat
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: my-java-app
+      env: uat
+  template:
+    metadata:
+      labels:
+        app: my-java-app
+        env: uat
+    spec:
+      containers:
+      - name: my-java-app
+        image: my-java-app:latest
+        ports:
+        - containerPort: 8080
+        livenessProbe:
+          httpGet:
+            path: /actuator/keepalive
+            port: 8080
+          periodSeconds: 10
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /actuator/keepalive
+            port: 8080
+          periodSeconds: 5
+          failureThreshold: 1
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-java-app-uat
+  namespace: uat
+spec:
+  selector:
+    app: my-java-app
+    env: uat
+  ports:
+  - port: 80
+    targetPort: 8080

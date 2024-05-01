@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: my-app-config
+data:
+  app.properties: |
+    database.url=jdbc:postgresql://my-db/myapp
+    database.username=myuser
+    database.password=mypassword
+    logging.level=INFO
